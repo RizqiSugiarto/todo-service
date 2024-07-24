@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package proto;
+
+import "invitation-category/payload_messages.proto";
+
+option go_package = "./invitation-category";
+
+service InvitationCategoryService {
+    rpc CreateInvitationCategory(CreateInvitationCategoryRequest) returns (InvitationCategoryBaseResponse){};
+    rpc GetInvitationCategory(GetInvitationCategoryByIDRequest) returns (InvitationCategoryBaseResponse){};
+    rpc GetAllInvitationCategory(GetAllInvitationCategoryRequest)returns (GetAllInvitationCategoryResponse) {};
+    rpc UpdateInvitationCategory(UpdateInvitationCategoryByIDRequest) returns (InvitationCategoryBaseResponse) {};
+    rpc DeleteInvitationCategory(DeleteInvitationCategoryByIDRequest) returns (InvitationCategoryBaseResponse) {};
+}

@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  invitation-postgres:
+    image: postgres
+    container_name: invitation-postgres
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_DB: '$DB_NAME'
+      POSTGRES_USER: '$DB_USER'
+      POSTGRES_PASSWORD: '$DB_PASS'
+    volumes:
+      - /var/lib/invitation-postgres:/var/lib/postgresql/data
+    ports:
+      - '$DB_PORT:5432'
+    networks:
+      - wedding_network
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management-alpine
+  #   container_name: rabbitmq
+  #   restart: unless-stopped
+  #   env_file: .env
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: '$RABBITMQ_USER'
+  #     RABBITMQ_DEFAULT_PASS: '$RABBITMQ_PASS'
+  #   ports:
+  #       - '$RABBITMQ_PORT:5672'
+  #       - '$RABBITMQ_UI_PORT:15672'
+  #   volumes:
+  #       - /var/lib/rabbitmq/data/:/var/lib/rabbitmq/
+  #       - /var/lib/rabbitmq/log/:/var/log/rabbitmq
+  #   networks:
+  #       - wedding_network
+
+networks:
+  wedding_network:
+    driver: bridge

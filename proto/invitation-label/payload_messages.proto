@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./invitation-label";
+
+message InvitationLabelBaseResponse {
+    string message = 1 [json_name = "message"];
+}
+
+message CreateInvitationLabelRequest {
+    string user_id = 1 [json_name = "user_id"];
+    string name = 2 [json_name = "name"];
+}
+
+message GetAllInvitationLabelByUserIDRequest {
+    string user_id = 1 [json_name = "user_id"];
+    optional string search = 2 [json_name = "search"];
+    optional int32 page = 3 [json_name = "page"];
+    optional int32 limit = 4 [json_name = "limit"];
+}
+
+message InvitationLabelPaging {
+    int32 current_page = 1 [json_name = "current_page"];
+    int32 total_page = 2 [json_name = "total_page"];
+    int32 count = 3 [json_name = "count"];
+}
+
+message GetAllInvitationLabelByUserIDResponse{
+    string message = 1 [json_name = "message"];
+    repeated GetInvitationLabelByIDResponse invitation_labels = 2 [json_name = "invitation_labels"];
+    InvitationLabelPaging paging = 3 [json_name = "paging"];
+}
+
+message GetInvitationLabelByIDRequest {
+    string id = 1 [json_name = "id"];
+}
+
+message GetInvitationLabelByIDResponse {
+    string id = 1 [json_name = "id"];
+    string user_id = 2 [json_name = "user_id"];
+    string name = 3 [json_name = "name"];
+    google.protobuf.Timestamp created_at = 4 [json_name = "created_at"];
+    google.protobuf.Timestamp updated_at = 5 [json_name = "updated_at"];
+    optional google.protobuf.Timestamp deleted_at = 6 [json_name = "deleted_at"];
+}
+
+message UpdateInvitationLabelByIDRequest {
+    string id = 1 [json_name = "id"];
+    string name = 2 [json_name = "name"];
+}
+
+message DeleteInvitationLabelByIDRequest {
+    string id = 1 [json_name = "id"];
+}

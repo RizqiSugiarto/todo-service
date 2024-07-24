@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package proto;
+
+import "invitation-label/payload_messages.proto";
+
+option go_package = "./invitation-label";
+
+service InvitationLabelService {
+    rpc CreateInvitationLabel(CreateInvitationLabelRequest) returns (InvitationLabelBaseResponse){};
+    rpc GetInvitationLabel(GetInvitationLabelByIDRequest) returns (GetInvitationLabelByIDResponse){};
+    rpc GetAllInvitationLabelByUserID(GetAllInvitationLabelByUserIDRequest)returns (GetAllInvitationLabelByUserIDResponse) {};
+    rpc UpdateInvitationLabel(UpdateInvitationLabelByIDRequest) returns (InvitationLabelBaseResponse) {};
+    rpc DeleteInvitationLabel(DeleteInvitationLabelByIDRequest) returns (InvitationLabelBaseResponse) {};
+}
