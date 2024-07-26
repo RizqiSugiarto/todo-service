@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./task";
+
+message TaskBaseResponse {
+    string message = 1 [json_name = "message"];
+}
+
+message CreateTaskRequest {
+    string activity_id = 1 [json_name = "activity_id"];
+    string title = 2 [json_name = "title"];
+    optional bool is_active = 3 [json_name = "is_active"];
+    int32 priority = 4 [json_name = "priority"];
+}
+
+message GetAllTaskByActivityIDRequest {
+    string activity_id = 1 [json_name = "activity_id"];
+    optional string search = 2 [json_name = "search"];
+    optional int32 page = 3 [json_name = "page"];
+    optional int32 limit = 4 [json_name = "limit"];
+    optional bool is_active = 5 [json_name = "is_active"];
+    optional int32 priority = 6 [json_name = "priority"];
+    optional bool is_newest = 7 [json_name = "is_newest"];
+    optional bool is_oldest = 8 [json_name = "is_oldest"];
+    optional bool is_ascending = 9 [json_name = "is_ascending"];
+    optional bool is_descending = 10 [json_name = "is_descending"];
+}
+
+message TaskPaging {
+    int32 current_page = 1 [json_name = "current_page"];
+    int32 total_page = 2 [json_name = "total_page"];
+    int32 count = 3 [json_name = "count"];
+}
+
+message GetAllTaskByActivityIDResponse{
+    string message = 1 [json_name = "message"];
+    repeated GetTaskByIDResponse tasks = 2 [json_name = "tasks"];
+    TaskPaging paging = 3 [json_name = "paging"];
+}
+
+message GetTaskByIDRequest {
+    string id = 1 [json_name = "id"];
+}
+
+message GetTaskByIDResponse {
+    string id = 1 [json_name = "id"];
+    string activity_id = 2 [json_name = "activity_id"];
+    string title = 3 [json_name = "title"];
+    bool is_active = 4 [json_name = "is_active"];
+    int32 priority = 5 [json_name = "priority"];
+    int32 order = 6 [json_name = "order"];
+    google.protobuf.Timestamp created_at = 7 [json_name = "created_at"];
+    google.protobuf.Timestamp updated_at = 8 [json_name = "updated_at"];
+    optional google.protobuf.Timestamp deleted_at = 9 [json_name = "deleted_at"];
+}
+
+message UpdateTaskByIDRequest {
+    string id = 1 [json_name = "id"];
+    optional string title = 2 [json_name = "title"];
+    optional bool is_active = 3 [json_name = "is_active"];
+    optional int32 priority = 4 [json_name = "priority"];
+    optional int32 order = 5 [json_name = "order"];
+}
+
+message BatchUpdateTaskRequest {
+    repeated UpdateTaskByIDRequest tasks = 1 [json_name = "tasks"];
+}
+
+message DeleteTaskByIDRequest {
+    string id = 1 [json_name = "id"];
+}

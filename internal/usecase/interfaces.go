@@ -3,31 +3,23 @@ package usecase
 import (
 	"context"
 
-	"github.com/digisata/invitation-service/internal/entity"
+	"github.com/digisata/todo-service/internal/entity"
 )
 
 type (
-	InvitationRepository interface {
-		Create(ctx context.Context, req entity.CreateInvitationRequest) error
-		Update(ctx context.Context, req entity.UpdateInvitationRequest) error
-		GetAll(ctx context.Context, req entity.GetAllInvitationRequest) ([]entity.Invitation, entity.Paging, error)
-		GetByID(ctx context.Context, id string) (entity.Invitation, error)
+	TaskRepository interface {
+		Create(ctx context.Context, req entity.CreateTaskRequest) error
+		Update(ctx context.Context, req entity.UpdateTaskRequest) error
+		GetAll(ctx context.Context, req entity.GetAllTaskRequest) ([]entity.Task, entity.Paging, error)
+		GetByID(ctx context.Context, id string) (entity.Task, error)
 		Delete(ctx context.Context, id string) error
 	}
 
-	InvitationLabelRepository interface {
-		Create(ctx context.Context, req entity.CreateInvitationLabelRequest) error
-		Update(ctx context.Context, req entity.UpdateInvitationLabelRequest) error
-		GetAll(ctx context.Context, req entity.GetAllInvitationLabelRequest) ([]entity.InvitationLabel, entity.Paging, error)
-		GetByID(ctx context.Context, id string) (entity.InvitationLabel, error)
-		Delete(ctx context.Context, id string) error
-	}
-
-	InvitationCategoryRepository interface {
-		Create(ctx context.Context, req entity.CreateInvitationCategoryRequest) error
-		Update(ctx context.Context, req entity.UpdateInvitationCategoryRequest) error
-		GetAll(ctx context.Context, req entity.GetAllInvitationCategoryRequest) ([]entity.InvitationCategory, entity.Paging, error)
-		GetByID(ctx context.Context, id string) (entity.InvitationCategory, error)
+	ActivityRepository interface {
+		Create(ctx context.Context, req entity.CreateActivityRequest) error
+		Update(ctx context.Context, req entity.UpdateActivityRequest) error
+		GetAll(ctx context.Context, req entity.GetAllActivityRequest) ([]entity.Activity, entity.Paging, error)
+		GetByID(ctx context.Context, id string) (entity.Activity, error)
 		Delete(ctx context.Context, id string) error
 	}
 )

@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/digisata/invitation-service/config"
-	"github.com/digisata/invitation-service/internal/app"
+	"github.com/digisata/todo-service/config"
+	"github.com/digisata/todo-service/internal/app"
 )
 
 func main() {

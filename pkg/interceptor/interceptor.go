@@ -3,7 +3,7 @@ package interceptor
 import (
 	"context"
 
-	"github.com/digisata/invitation-service/pkg/constans"
+	"github.com/digisata/todo-service/pkg/constans"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )

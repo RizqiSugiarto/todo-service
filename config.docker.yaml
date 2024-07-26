@@ -1,26 +1,14 @@
 app_env: local
-wedding_invitation_base_url: www.example.com
-encryption_key: secret_key
 
 postgres:
   db_host: localhost
   db_port: 5433
   db_user: user
   db_pass: pass
-  db_name: invitation-service
+  db_name: todo-service
 
 grpc_server:
   network: tcp
   host: localhost
   port: 9100
   tls: false
-
-rabbitmq:
-  host: localhost
-  port: 5672
-  user: user
-  pass: pass
-  queues: invitation_open, invitation_coming, invitation_send_money, invitation_send_gift, invitation_check_in
-  job_queue_size: 100
-  publisher_count: 25
-  consumer_count: 10

@@ -4,19 +4,16 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strings"
 
-	"github.com/digisata/invitation-service/config"
-	"github.com/digisata/invitation-service/internal/handler"
-	"github.com/digisata/invitation-service/internal/repository"
-	"github.com/digisata/invitation-service/internal/usecase"
-	"github.com/digisata/invitation-service/pkg/grpcserver"
-	"github.com/digisata/invitation-service/pkg/interceptor"
-	"github.com/digisata/invitation-service/pkg/postgres"
-	"github.com/digisata/invitation-service/pkg/rabbitclient"
-	invitationPB "github.com/digisata/invitation-service/stubs/invitation"
-	invitationCategoryPB "github.com/digisata/invitation-service/stubs/invitation-category"
-	invitationLabelPB "github.com/digisata/invitation-service/stubs/invitation-label"
+	"github.com/digisata/todo-service/config"
+	"github.com/digisata/todo-service/internal/handler"
+	"github.com/digisata/todo-service/internal/repository"
+	"github.com/digisata/todo-service/internal/usecase"
+	"github.com/digisata/todo-service/pkg/grpcserver"
+	"github.com/digisata/todo-service/pkg/interceptor"
+	"github.com/digisata/todo-service/pkg/postgres"
+	activityPB "github.com/digisata/todo-service/stubs/activity"
+	taskPB "github.com/digisata/todo-service/stubs/task"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
@@ -51,66 +48,13 @@ func Run(cfg *config.Config) {
 	}
 
 	// Dependencies injection
-	invitationRepository := repository.NewInvitation(pg)
-	invitationService := usecase.NewInvitation(cfg, invitationRepository)
-	invitationHandler := handler.NewInvitation(invitationService)
+	taskRepository := repository.NewTask(pg)
+	taskService := usecase.NewTask(taskRepository)
+	taskHandler := handler.NewTask(taskService)
 
-	invitationLabelRepository := repository.NewInvitationLabel(pg)
-	invitationLabelService := usecase.NewInvitationLabel(invitationLabelRepository)
-	invitationLabelHandler := handler.NewInvitationLabel(invitationLabelService)
-
-	invitationCategoryRepository := repository.NewInvitationCategory(pg)
-	invitationCategoryService := usecase.NewInvitationCategory(invitationCategoryRepository)
-	invitationCategoryHandler := handler.NewInvitationCategory(invitationCategoryService)
-
-	// Setup RabbitMQ
-	rabbitMQ, err := rabbitclient.New(cfg.RabbitMQ)
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	defer rabbitMQ.Conn.Close()
-
-	err = rabbitMQ.NewChannel()
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	defer rabbitMQ.Ch.Close()
-
-	invitationEventHandler := handler.NewInvitationEvent(invitationService, rabbitMQ, cfg.RabbitMQ.ConsumerCount)
-
-	// Declare queues
-	for _, queueName := range strings.Split(cfg.RabbitMQ.Queues, ", ") {
-		err := rabbitMQ.DeclareQueue(queueName)
-		if err != nil {
-			log.Fatalf(err.Error())
-		}
-	}
-
-	// Start consume messages
-	err = invitationEventHandler.StartConsumeInvitationOpenEvent()
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
-	err = invitationEventHandler.StartConsumeInvitationComingEvent()
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
-	err = invitationEventHandler.StartConsumeInvitationSendMoneyEvent()
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
-	err = invitationEventHandler.StartConsumeInvitationSendGiftEvent()
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
-	err = invitationEventHandler.StartConsumeInvitationCheckInEvent()
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
+	activityRepository := repository.NewActivity(pg)
+	activityService := usecase.NewActivity(activityRepository)
+	activityCategoryHandler := handler.NewActivity(activityService)
 
 	// Setup grpc server
 	im := interceptor.NewInterceptorManager(sugar)
@@ -120,9 +64,8 @@ func Run(cfg *config.Config) {
 	}
 	defer grpcServer.Stop(ctx)
 
-	invitationPB.RegisterInvitationServiceServer(grpcServer, invitationHandler)
-	invitationLabelPB.RegisterInvitationLabelServiceServer(grpcServer, invitationLabelHandler)
-	invitationCategoryPB.RegisterInvitationCategoryServiceServer(grpcServer, invitationCategoryHandler)
+	taskPB.RegisterTaskServiceServer(grpcServer, taskHandler)
+	activityPB.RegisterActivityServiceServer(grpcServer, activityCategoryHandler)
 	grpc_health_v1.RegisterHealthServer(grpcServer.Server, health.NewServer())
 
 	err = grpcServer.Run()

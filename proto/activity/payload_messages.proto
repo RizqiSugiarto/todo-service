@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "./activity";
+
+message ActivityPaging {
+    int32 current_page = 1 [json_name = "current_page"];
+    int32 total_page = 2 [json_name = "total_page"];
+    int32 count = 3 [json_name = "count"];
+}
+
+message ActivityBaseResponse {
+    string message = 1 [json_name = "message"];
+    optional google.protobuf.Any data = 2 [json_name = "data"];
+    optional ActivityPaging paging = 3 [json_name = "paging"];
+}
+
+message CreateActivityRequest {
+    string title = 1 [json_name = "title"];
+}
+
+message GetAllActivityRequest {
+    optional string search = 1 [json_name = "search"];
+    optional int32 page = 2 [json_name = "page"];
+    optional int32 limit = 3 [json_name = "limit"];
+}
+
+message GetAllActivityResponse {
+    string message = 1 [json_name = "message"];
+    repeated GetActivityByIDResponse data = 2 [json_name = "data"];
+    ActivityPaging paging = 3 [json_name = "paging"];
+}
+
+message GetActivityByIDRequest {
+    string id = 1 [json_name = "id"];
+}
+
+message GetActivityByIDResponse {
+    string id = 1 [json_name = "id"];
+    string title = 2 [json_name = "title"];
+    google.protobuf.Timestamp created_at = 3 [json_name = "created_at"];
+    google.protobuf.Timestamp updated_at = 4 [json_name = "updated_at"];
+    google.protobuf.Timestamp deleted_at = 5 [json_name = "deleted_at"];
+}
+
+message UpdateActivityByIDRequest {
+    string id = 1 [json_name = "id"];
+    string title = 2 [json_name = "title"];
+}
+
+message DeleteActivityByIDRequest {
+    string id = 1 [json_name = "id"];
+}

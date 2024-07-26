@@ -4,14 +4,14 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/digisata/invitation-service/internal/entity"
+	"github.com/digisata/todo-service/internal/entity"
 )
 
 func ConvertToJakartaTime(t time.Time) time.Time {
 	return t.Add(7 * time.Hour)
 }
 
-func CreateUpdateValueMap[T entity.UpdateInvitationRequest | entity.UpdateInvitationLabelRequest | entity.UpdateInvitationCategoryRequest](req T) map[string]interface{} {
+func CreateUpdateValueMap[T entity.UpdateTaskRequest | entity.UpdateActivityRequest](req T) map[string]interface{} {
 	updateValue := map[string]interface{}{
 		"updated_at": time.Now().UTC(),
 	}

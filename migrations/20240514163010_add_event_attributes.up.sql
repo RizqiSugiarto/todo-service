@@ -1,7 +1,0 @@
-ALTER TABLE invitations 
-    ADD COLUMN is_open BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN open_at TIMESTAMP,
-    ADD COLUMN is_coming BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN is_send_gift BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN is_checking BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN checking_at TIMESTAMP;

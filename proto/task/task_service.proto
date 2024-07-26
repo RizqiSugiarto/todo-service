@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package proto;
+
+import "task/payload_messages.proto";
+
+option go_package = "./task";
+
+service TaskService {
+    rpc Create(CreateTaskRequest) returns (TaskBaseResponse){};
+    rpc Get(GetTaskByIDRequest) returns (GetTaskByIDResponse){};
+    rpc GetAllByUserID(GetAllTaskByActivityIDRequest)returns (GetAllTaskByActivityIDResponse) {};
+    rpc Update(UpdateTaskByIDRequest) returns (TaskBaseResponse) {};
+    rpc Delete(DeleteTaskByIDRequest) returns (TaskBaseResponse) {};
+    rpc BatchUpdate(BatchUpdateTaskRequest) returns (TaskBaseResponse) {};
+}

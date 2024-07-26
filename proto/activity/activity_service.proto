@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package proto;
+
+import "activity/payload_messages.proto";
+
+option go_package = "./activity";
+
+service ActivityService {
+    rpc Create(CreateActivityRequest) returns (ActivityBaseResponse){};
+    rpc Get(GetActivityByIDRequest) returns (ActivityBaseResponse){};
+    rpc GetAll(GetAllActivityRequest)returns (GetAllActivityResponse) {};
+    rpc Update(UpdateActivityByIDRequest) returns (ActivityBaseResponse) {};
+    rpc Delete(DeleteActivityByIDRequest) returns (ActivityBaseResponse) {};
+}

@@ -10,8 +10,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/digisata/invitation-service/pkg/constans"
-	"github.com/digisata/invitation-service/pkg/interceptor"
+	"github.com/digisata/todo-service/pkg/constans"
+	"github.com/digisata/todo-service/pkg/interceptor"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcCtxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"

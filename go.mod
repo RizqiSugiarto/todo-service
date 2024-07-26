@@ -1,4 +1,4 @@
-module github.com/digisata/invitation-service
+module github.com/digisata/todo-service
 
 go 1.22
 
