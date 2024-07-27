@@ -42,9 +42,10 @@ message GetActivityByIDRequest {
 message GetActivityByIDResponse {
     string id = 1 [json_name = "id"];
     string title = 2 [json_name = "title"];
-    google.protobuf.Timestamp created_at = 3 [json_name = "created_at"];
-    google.protobuf.Timestamp updated_at = 4 [json_name = "updated_at"];
-    google.protobuf.Timestamp deleted_at = 5 [json_name = "deleted_at"];
+    string type = 3 [json_name = "type"];
+    google.protobuf.Timestamp created_at = 4 [json_name = "created_at"];
+    google.protobuf.Timestamp updated_at = 5 [json_name = "updated_at"];
+    google.protobuf.Timestamp deleted_at = 6 [json_name = "deleted_at"];
 }
 
 message UpdateActivityByIDRequest {

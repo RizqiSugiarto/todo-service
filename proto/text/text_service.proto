@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package proto;
+
+import "text/payload_messages.proto";
+
+option go_package = "./text";
+
+service TextService {
+    rpc Create(CreateTextRequest) returns (TextBaseResponse){};
+    rpc Get(GetTextByIDRequest) returns (GetTextByIDResponse){};
+    rpc GetAllByUserID(GetAllTextByActivityIDRequest)returns (GetAllTextByActivityIDResponse) {};
+    rpc Update(UpdateTextByIDRequest) returns (TextBaseResponse) {};
+    rpc Delete(DeleteTextByIDRequest) returns (TextBaseResponse) {};
+}

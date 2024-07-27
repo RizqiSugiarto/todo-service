@@ -11,7 +11,7 @@ func ConvertToJakartaTime(t time.Time) time.Time {
 	return t.Add(7 * time.Hour)
 }
 
-func CreateUpdateValueMap[T entity.UpdateTaskRequest | entity.UpdateActivityRequest](req T) map[string]interface{} {
+func CreateUpdateValueMap[T entity.UpdateTaskRequest | entity.UpdateActivityRequest | entity.UpdateTextRequest](req T) map[string]interface{} {
 	updateValue := map[string]interface{}{
 		"updated_at": time.Now().UTC(),
 	}

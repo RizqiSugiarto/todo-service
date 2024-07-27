@@ -75,6 +75,7 @@ func (h *ActivityHandler) Get(ctx context.Context, req *activityPB.GetActivityBy
 	getActivityByIDResponse := &activityPB.GetActivityByIDResponse{
 		Id:        data.ID,
 		Title:     data.Title,
+		Type:      data.Type,
 		CreatedAt: timestamppb.New(data.CreatedAt),
 		UpdatedAt: timestamppb.New(data.UpdatedAt),
 	}
@@ -118,6 +119,7 @@ func (g *ActivityHandler) GetAll(ctx context.Context, req *activityPB.GetAllActi
 		data := &activityPB.GetActivityByIDResponse{
 			Id:        activity.ID,
 			Title:     activity.Title,
+			Type:      activity.Type,
 			CreatedAt: timestamppb.New(activity.CreatedAt),
 			UpdatedAt: timestamppb.New(activity.UpdatedAt),
 		}

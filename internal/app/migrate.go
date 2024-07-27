@@ -21,7 +21,7 @@ func RunMigrate(db *sql.DB) error {
 
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
-		return fmt.Errorf("migrate -  mysql.WithInstance: %v", err)
+		return fmt.Errorf("migrate -  postgres.WithInstance: %v", err)
 	}
 
 	m, err = migrate.NewWithDatabaseInstance(

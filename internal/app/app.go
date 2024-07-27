@@ -14,6 +14,7 @@ import (
 	"github.com/digisata/todo-service/pkg/postgres"
 	activityPB "github.com/digisata/todo-service/stubs/activity"
 	taskPB "github.com/digisata/todo-service/stubs/task"
+	textPB "github.com/digisata/todo-service/stubs/text"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
@@ -56,6 +57,10 @@ func Run(cfg *config.Config) {
 	activityService := usecase.NewActivity(activityRepository)
 	activityCategoryHandler := handler.NewActivity(activityService)
 
+	textRepository := repository.NewText(pg)
+	textService := usecase.NewText(textRepository)
+	textHandler := handler.NewText(textService)
+
 	// Setup grpc server
 	im := interceptor.NewInterceptorManager(sugar)
 	grpcServer, err := grpcserver.NewGrpcServer(cfg.GrpcServer, sugar, im)
@@ -66,6 +71,7 @@ func Run(cfg *config.Config) {
 
 	taskPB.RegisterTaskServiceServer(grpcServer, taskHandler)
 	activityPB.RegisterActivityServiceServer(grpcServer, activityCategoryHandler)
+	textPB.RegisterTextServiceServer(grpcServer, textHandler)
 	grpc_health_v1.RegisterHealthServer(grpcServer.Server, health.NewServer())
 
 	err = grpcServer.Run()

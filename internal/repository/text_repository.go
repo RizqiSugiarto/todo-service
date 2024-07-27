@@ -11,20 +11,20 @@ import (
 	"github.com/digisata/todo-service/pkg/postgres"
 )
 
-type ActivityRepository struct {
+type TextRepository struct {
 	*postgres.Postgres
 }
 
-func NewActivity(db *postgres.Postgres) *ActivityRepository {
-	return &ActivityRepository{db}
+func NewText(db *postgres.Postgres) *TextRepository {
+	return &TextRepository{db}
 }
 
-func (r ActivityRepository) Create(ctx context.Context, req entity.CreateActivityRequest) error {
+func (r TextRepository) Create(ctx context.Context, req entity.CreateTextRequest) error {
 	now := time.Now().UTC()
 	sql, args, err := r.Builder.
-		Insert("activities").
-		Columns("title, created_at, updated_at").
-		Values(req.Title, now, now).
+		Insert("texts").
+		Columns("text, activity_id, created_at, updated_at").
+		Values(req.Text, req.ActivityID, now, now).
 		ToSql()
 	if err != nil {
 		return err
@@ -38,7 +38,7 @@ func (r ActivityRepository) Create(ctx context.Context, req entity.CreateActivit
 	return nil
 }
 
-func (r ActivityRepository) Update(ctx context.Context, req entity.UpdateActivityRequest) error {
+func (r TextRepository) Update(ctx context.Context, req entity.UpdateTextRequest) error {
 	tx, err := r.Db.Begin()
 	if err != nil {
 		return err
@@ -55,9 +55,8 @@ func (r ActivityRepository) Update(ctx context.Context, req entity.UpdateActivit
 	}()
 
 	updateValue := shared.CreateUpdateValueMap(req)
-
 	sql, args, err := r.Builder.
-		Update("activities").
+		Update("texts").
 		SetMap(updateValue).
 		Where(squirrel.Eq{"id": req.ID}).
 		Where(squirrel.Eq{"deleted_at": nil}).
@@ -83,34 +82,57 @@ func (r ActivityRepository) Update(ctx context.Context, req entity.UpdateActivit
 	return nil
 }
 
-func (r ActivityRepository) GetAll(ctx context.Context, req entity.GetAllActivityRequest) ([]entity.Activity, entity.Paging, error) {
+func (r TextRepository) GetAll(ctx context.Context, req entity.GetAllTextRequest) ([]entity.Text, entity.Paging, error) {
 	var (
-		data   []entity.Activity
+		data   []entity.Text
 		paging entity.Paging
 	)
 
 	baseQuery := r.Builder.
-		Select("a.id, a.title, " +
-			"CASE WHEN t.activity_id IS NOT NULL THEN 'activity_task' " +
-			"WHEN x.activity_id IS NOT NULL THEN 'activity_text' " +
-			"ELSE 'unknown' END as type, " +
-			"a.created_at, a.updated_at").
-		From("activities a").
-		LeftJoin("tasks t ON a.id = t.activity_id").
-		LeftJoin("texts x ON a.id = x.activity_id").
-		Where(squirrel.Eq{"a.deleted_at": nil})
+		Select("id, text, activity_id, created_at, updated_at").
+		From("texts").
+		Where(squirrel.Eq{"activity_id": req.ActivityID}).
+		Where(squirrel.Eq{"deleted_at": nil})
 
 	// Clone the base query for counting total rows
 	countQuery := r.Builder.
 		Select("COUNT(*)").
-		From("activities a").
-		Where(squirrel.Eq{"a.deleted_at": nil})
+		From("texts").
+		Where(squirrel.Eq{"activity_id": req.ActivityID}).
+		Where(squirrel.Eq{"deleted_at": nil})
+
+	var isFilterApplied bool
 
 	// Apply search filter if present
 	if req.Search != nil {
+		isFilterApplied = true
 		searchPattern := fmt.Sprintf("%%%s%%", *req.Search)
-		baseQuery = baseQuery.Where(squirrel.ILike{"a.title": searchPattern})
-		countQuery = countQuery.Where(squirrel.ILike{"a.title": searchPattern})
+		baseQuery = baseQuery.Where(squirrel.ILike{"title": searchPattern})
+		countQuery = countQuery.Where(squirrel.ILike{"title": searchPattern})
+	}
+
+	if req.IsNewest != nil && *req.IsNewest {
+		isFilterApplied = true
+		baseQuery = baseQuery.OrderBy("created_at DESC")
+	}
+
+	if req.IsOldest != nil && *req.IsOldest {
+		isFilterApplied = true
+		baseQuery = baseQuery.OrderBy("created_at ASC")
+	}
+
+	if req.IsAscending != nil && *req.IsAscending {
+		isFilterApplied = true
+		baseQuery = baseQuery.OrderBy("text ASC")
+	}
+
+	if req.IsDescending != nil && *req.IsDescending {
+		isFilterApplied = true
+		baseQuery = baseQuery.OrderBy("text DESC")
+	}
+
+	if !isFilterApplied {
+		baseQuery = baseQuery.OrderBy("created_at ASC")
 	}
 
 	// Get the total count of rows that match the query
@@ -160,38 +182,45 @@ func (r ActivityRepository) GetAll(ctx context.Context, req entity.GetAllActivit
 	defer rows.Close()
 
 	for rows.Next() {
-		var activity entity.Activity
-		if err := rows.Scan(&activity.ID, &activity.Title, &activity.Type, &activity.CreatedAt, &activity.UpdatedAt); err != nil {
+		var task entity.Text
+		err := rows.Scan(
+			&task.ID,
+			&task.Text,
+			&task.ActivityID,
+			&task.CreatedAt,
+			&task.UpdatedAt,
+		)
+		if err != nil {
 			return data, paging, err
 		}
-		data = append(data, activity)
+
+		data = append(data, task)
 	}
 
 	return data, paging, nil
 }
 
-func (r ActivityRepository) GetByID(ctx context.Context, id string) (entity.Activity, error) {
-	var data entity.Activity
+func (r TextRepository) GetByID(ctx context.Context, id string) (entity.Text, error) {
+	var data entity.Text
 
 	sql, args, err := r.Builder.
-		Select("a.id, a.title, " +
-			"CASE WHEN t.activity_id IS NOT NULL THEN 'activity_task' " +
-			"WHEN x.activity_id IS NOT NULL THEN 'activity_text' " +
-			"ELSE 'unknown' END as type, " +
-			"a.created_at, a.updated_at").
-		From("activities a").
-		LeftJoin("tasks t ON a.id = t.activity_id").
-		LeftJoin("texts x ON a.id = x.activity_id").
-		Where(squirrel.Eq{"a.id": id}).
-		Where(squirrel.Eq{"a.deleted_at": nil}).
+		Select("id, text, activity_id, created_at, updated_at").
+		From("texts").
+		Where(squirrel.Eq{"id": id}).
+		Where(squirrel.Eq{"deleted_at": nil}).
 		ToSql()
 	if err != nil {
 		return data, err
 	}
 
-	row := r.Db.QueryRowContext(ctx, sql, args...)
-	err = row.Scan(&data.ID, &data.Title, &data.Type, &data.CreatedAt, &data.UpdatedAt)
-	fmt.Println(data, "GINI DULU SIH")
+	rows := r.Db.QueryRowContext(ctx, sql, args...)
+	err = rows.Scan(
+		&data.ID,
+		&data.ActivityID,
+		&data.Text,
+		&data.CreatedAt,
+		&data.UpdatedAt,
+	)
 	if err != nil {
 		return data, err
 	}
@@ -199,7 +228,7 @@ func (r ActivityRepository) GetByID(ctx context.Context, id string) (entity.Acti
 	return data, nil
 }
 
-func (r ActivityRepository) Delete(ctx context.Context, id string) error {
+func (r TextRepository) Delete(ctx context.Context, id string) error {
 	tx, err := r.Db.Begin()
 	if err != nil {
 		return err
@@ -220,7 +249,7 @@ func (r ActivityRepository) Delete(ctx context.Context, id string) error {
 	}
 
 	sql, args, err := r.Builder.
-		Update("activities").
+		Update("texts").
 		SetMap(deleteValue).
 		Where(squirrel.Eq{"id": id}).
 		Where(squirrel.Eq{"deleted_at": nil}).
