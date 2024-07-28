@@ -1,0 +1,2 @@
+ALTER TABLE activities
+ADD COLUMN "type" VARCHAR(50) NOT NULL DEFAULT '';

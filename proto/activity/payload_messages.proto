@@ -21,6 +21,7 @@ message ActivityBaseResponse {
 
 message CreateActivityRequest {
     string title = 1 [json_name = "title"];
+    string type = 2 [json_name = "type"];
 }
 
 message GetAllActivityRequest {
@@ -51,6 +52,7 @@ message GetActivityByIDResponse {
 message UpdateActivityByIDRequest {
     string id = 1 [json_name = "id"];
     string title = 2 [json_name = "title"];
+    string type = 3 [json_name = "type"];
 }
 
 message DeleteActivityByIDRequest {

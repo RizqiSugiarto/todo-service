@@ -26,6 +26,7 @@ func NewActivity(activityUseCase ActivityUseCase) *ActivityHandler {
 func (h *ActivityHandler) Create(ctx context.Context, req *activityPB.CreateActivityRequest) (*activityPB.ActivityBaseResponse, error) {
 	payload := entity.CreateActivityRequest{
 		Title: req.GetTitle(),
+		Type:  req.GetType(),
 	}
 
 	err := h.activityUseCase.CreateActivity(ctx, payload)
@@ -44,6 +45,7 @@ func (g *ActivityHandler) Update(ctx context.Context, req *activityPB.UpdateActi
 	payload := entity.UpdateActivityRequest{
 		ID:    req.GetId(),
 		Title: req.GetTitle(),
+		Type:  req.GetType(),
 	}
 
 	err := g.activityUseCase.UpdateActivity(ctx, payload)

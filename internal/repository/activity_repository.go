@@ -23,8 +23,8 @@ func (r ActivityRepository) Create(ctx context.Context, req entity.CreateActivit
 	now := time.Now().UTC()
 	sql, args, err := r.Builder.
 		Insert("activities").
-		Columns("title, created_at, updated_at").
-		Values(req.Title, now, now).
+		Columns("title, type, created_at, updated_at").
+		Values(req.Title, req.Type, now, now).
 		ToSql()
 	if err != nil {
 		return err
@@ -90,15 +90,9 @@ func (r ActivityRepository) GetAll(ctx context.Context, req entity.GetAllActivit
 	)
 
 	baseQuery := r.Builder.
-		Select("a.id, a.title, " +
-			"CASE WHEN t.activity_id IS NOT NULL THEN 'activity_task' " +
-			"WHEN x.activity_id IS NOT NULL THEN 'activity_text' " +
-			"ELSE 'unknown' END as type, " +
-			"a.created_at, a.updated_at").
-		From("activities a").
-		LeftJoin("tasks t ON a.id = t.activity_id").
-		LeftJoin("texts x ON a.id = x.activity_id").
-		Where(squirrel.Eq{"a.deleted_at": nil})
+		Select("id, title, type, created_at, updated_at").
+		From("activities").
+		Where(squirrel.Eq{"deleted_at": nil})
 
 	// Clone the base query for counting total rows
 	countQuery := r.Builder.
@@ -174,16 +168,10 @@ func (r ActivityRepository) GetByID(ctx context.Context, id string) (entity.Acti
 	var data entity.Activity
 
 	sql, args, err := r.Builder.
-		Select("a.id, a.title, " +
-			"CASE WHEN t.activity_id IS NOT NULL THEN 'activity_task' " +
-			"WHEN x.activity_id IS NOT NULL THEN 'activity_text' " +
-			"ELSE 'unknown' END as type, " +
-			"a.created_at, a.updated_at").
-		From("activities a").
-		LeftJoin("tasks t ON a.id = t.activity_id").
-		LeftJoin("texts x ON a.id = x.activity_id").
-		Where(squirrel.Eq{"a.id": id}).
-		Where(squirrel.Eq{"a.deleted_at": nil}).
+		Select("id, title, type,created_at, updated_at").
+		From("activities").
+		Where(squirrel.Eq{"id": id}).
+		Where(squirrel.Eq{"deleted_at": nil}).
 		ToSql()
 	if err != nil {
 		return data, err
@@ -191,7 +179,6 @@ func (r ActivityRepository) GetByID(ctx context.Context, id string) (entity.Acti
 
 	row := r.Db.QueryRowContext(ctx, sql, args...)
 	err = row.Scan(&data.ID, &data.Title, &data.Type, &data.CreatedAt, &data.UpdatedAt)
-	fmt.Println(data, "GINI DULU SIH")
 	if err != nil {
 		return data, err
 	}
