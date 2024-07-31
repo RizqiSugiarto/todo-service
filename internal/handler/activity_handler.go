@@ -29,6 +29,12 @@ func (h *ActivityHandler) Create(ctx context.Context, req *activityPB.CreateActi
 		Type:  req.GetType(),
 	}
 
+	// if payload.Type == "text" {
+	// 	h.acitivityTextUseCase.CreateText(ctx, entity.CreateTextRequest{
+	// 		ActivityID: pa,
+	// 	})
+	// }
+
 	err := h.activityUseCase.CreateActivity(ctx, payload)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Internal Server error: %v", err)

@@ -1,7 +1,7 @@
 SERVICE_NAME=todo-service
 ENGINE=main.go
 BUILD_DIR=build
-IMAGE_REPOSITORY=digisata/todo-service
+IMAGE_REPOSITORY=rizqi20/todo-service
 
 .PHONY: build run build-run local docker-build docker-run docker-build-run compose-up compose-down check-if-present-env check-if-valid-env clean-proto proto-gen ssl-gen env-local env-docker migrate-create mock ssl-gen
 

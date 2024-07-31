@@ -20,19 +20,37 @@ func NewActivity(db *postgres.Postgres) *ActivityRepository {
 }
 
 func (r ActivityRepository) Create(ctx context.Context, req entity.CreateActivityRequest) error {
+	var activityId string
+
 	now := time.Now().UTC()
 	sql, args, err := r.Builder.
 		Insert("activities").
 		Columns("title, type, created_at, updated_at").
-		Values(req.Title, req.Type, now, now).
+		Values(req.Title, req.Type, now, now).Suffix("RETURNING id").
 		ToSql()
 	if err != nil {
 		return err
 	}
 
-	_, err = r.Db.ExecContext(ctx, sql, args...)
+	err = r.Db.QueryRowContext(ctx, sql, args...).Scan(&activityId)
 	if err != nil {
 		return err
+	}
+
+	if req.Type == "activity_text" {
+		sql, args, err := r.Builder.
+			Insert("texts").
+			Columns("text, activity_id, created_at, updated_at").
+			Values(`<p class="default-text">Fill your note ....</p>`, activityId, now, now).
+			ToSql()
+		if err != nil {
+			return err
+		}
+
+		_, err = r.Db.ExecContext(ctx, sql, args...)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
