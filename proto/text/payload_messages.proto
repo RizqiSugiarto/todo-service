@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./text";
+
+message TextBaseResponse {
+    string message = 1 [json_name = "message"];
+}
+
+message CreateTextRequest {
+    string activity_id = 1 [json_name = "activity_id"];
+    string text = 2 [json_name = "text"];
+}
+
+message GetAllTextByActivityIDRequest {
+    string activity_id = 1 [json_name = "activity_id"];
+    optional string search = 2 [json_name = "search"];
+    optional int32 page = 3 [json_name = "page"];
+    optional int32 limit = 4 [json_name = "limit"];
+    optional bool is_newest = 7 [json_name = "is_newest"];
+    optional bool is_oldest = 8 [json_name = "is_oldest"];
+    optional bool is_ascending = 9 [json_name = "is_ascending"];
+    optional bool is_descending = 10 [json_name = "is_descending"];
+}
+
+message TextPaging {
+    int32 current_page = 1 [json_name = "current_page"];
+    int32 total_page = 2 [json_name = "total_page"];
+    int32 count = 3 [json_name = "count"];
+}
+
+message GetAllTextByActivityIDResponse{
+    string message = 1 [json_name = "message"];
+    repeated GetTextByIDResponse texts = 2 [json_name = "texts"];
+    TextPaging paging = 3 [json_name = "paging"];
+}
+
+message GetTextByIDRequest {
+    string id = 1 [json_name = "id"];
+}
+
+message GetTextByIDResponse {
+    string id = 1 [json_name = "id"];
+    string activity_id = 2 [json_name = "activity_id"];
+    string text = 3 [json_name = "text"];
+    google.protobuf.Timestamp created_at = 7 [json_name = "created_at"];
+    google.protobuf.Timestamp updated_at = 8 [json_name = "updated_at"];
+    optional google.protobuf.Timestamp deleted_at = 9 [json_name = "deleted_at"];
+}
+
+message UpdateTextByIDRequest {
+    string id = 1 [json_name = "id"];
+    optional string text = 2 [json_name = "text"];
+}
+
+message DeleteTextByIDRequest {
+    string id = 1 [json_name = "id"];
+}

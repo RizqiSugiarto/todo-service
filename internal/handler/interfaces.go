@@ -23,4 +23,12 @@ type (
 		GetAllActivity(ctx context.Context, req entity.GetAllActivityRequest) ([]entity.Activity, entity.Paging, error)
 		DeleteActivity(ctx context.Context, id string) error
 	}
+
+	TextUseCase interface {
+		CreateText(ctx context.Context, req entity.CreateTextRequest) error
+		UpdateText(ctx context.Context, req entity.UpdateTextRequest) error
+		GetText(ctx context.Context, id string) (entity.Text, error)
+		GetAllTextByActivityID(ctx context.Context, req entity.GetAllTextRequest) ([]entity.Text, entity.Paging, error)
+		DeleteText(ctx context.Context, id string) error
+	}
 )

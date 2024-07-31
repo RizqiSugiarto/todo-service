@@ -6,6 +6,7 @@ type (
 	Activity struct {
 		ID        string
 		Title     string
+		Type      string
 		CreatedAt time.Time
 		UpdatedAt time.Time
 		DeletedAt *time.Time
@@ -13,11 +14,13 @@ type (
 
 	CreateActivityRequest struct {
 		Title string
+		Type  string
 	}
 
 	UpdateActivityRequest struct {
 		ID    string
 		Title string `db:"title"`
+		Type  string `db:"type"`
 	}
 
 	GetAllActivityRequest struct {
